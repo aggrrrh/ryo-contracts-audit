@@ -1,0 +1,7 @@
+{
+    "GovernanceTimeLock": {
+        "minDelay": 172800,
+        "proposers": [],
+        "executors": []
+    }
+}
