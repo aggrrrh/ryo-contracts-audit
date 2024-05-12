@@ -19,6 +19,8 @@ abstract contract TokenUnlockSchedule is AccessControl {
         uint256 amount
     );
 
+    event SaleLaunch(address sender);
+
     bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
     uint16 private constant PERCENT_DENOMINATOR = 10_000;
 
@@ -62,6 +64,8 @@ abstract contract TokenUnlockSchedule is AccessControl {
         require(scheduleStartTimestamp == 0, "TokenUnlockSchedule: Sale already launched");
         // solhint-disable-next-line not-rely-on-time
         scheduleStartTimestamp = block.timestamp;
+
+        emit SaleLaunch(msg.sender);
     }
 
     function addBalance(

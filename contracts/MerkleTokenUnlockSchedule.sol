@@ -15,6 +15,7 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
     using SafeERC20 for IERC20;
 
     event ClaimRootSet(bytes32 _newClaimRoot);
+    event SaleLaunch(address sender);
 
     struct UnlockScheduleItem {
         uint256 unlockTimePass;
@@ -66,6 +67,8 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
         );
         // solhint-disable-next-line not-rely-on-time
         scheduleStartTimestamp = block.timestamp;
+
+        emit SaleLaunch(msg.sender);
     }
 
     function withdraw(
