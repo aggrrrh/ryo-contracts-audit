@@ -136,10 +136,11 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
     }
 
     function _validateUnlockSchedule() private view {
-        assert(unlockSchedule.length > 1);
-        assert(unlockSchedule[unlockSchedule.length - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR);
+        uint256 steps = unlockSchedule.length;
+        assert(steps > 1);
+        assert(unlockSchedule[steps - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR);
 
-        for (uint8 i = 1; i < unlockSchedule.length; ++i) {
+        for (uint8 i = 1; i < steps; ++i) {
             assert(
                 unlockSchedule[i - 1].unlockTimePass <
                     unlockSchedule[i].unlockTimePass
