@@ -15,6 +15,7 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
     using SafeERC20 for IERC20;
 
     event ClaimRootSet(bytes32 _newClaimRoot);
+    event SaleLaunch(address sender);
 
     struct UnlockScheduleItem {
         uint256 unlockTimePass;
@@ -26,7 +27,6 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
 
     uint256 public scheduleStartTimestamp = 0;
     bytes32 private claimRoot;
-    uint256 public totalBalance;
 
     IERC20 public immutable token;
 
@@ -67,6 +67,8 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
         );
         // solhint-disable-next-line not-rely-on-time
         scheduleStartTimestamp = block.timestamp;
+
+        emit SaleLaunch(msg.sender);
     }
 
     function withdraw(
@@ -129,17 +131,18 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
     function getUnlockedPercent(
         uint256 secondsPassed
     ) internal view returns (uint16) {
-        uint8 index = 0;
+        uint256 index = 0;
         while(index < unlockSchedule.length && unlockSchedule[index].unlockTimePass < secondsPassed) { index++; }
 
         return index > 0 ? unlockSchedule[index - 1].totalPercentageUnlocked : 0;
     }
 
     function _validateUnlockSchedule() private view {
-        assert(unlockSchedule.length > 1);
-        assert(unlockSchedule[unlockSchedule.length - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR);
+        uint256 steps = unlockSchedule.length;
+        assert(steps > 1);
+        assert(unlockSchedule[steps - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR);
 
-        for (uint8 i = 1; i < unlockSchedule.length; ++i) {
+        for (uint256 i = 1; i < steps; ++i) {
             assert(
                 unlockSchedule[i - 1].unlockTimePass <
                     unlockSchedule[i].unlockTimePass
@@ -149,9 +152,5 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
                     unlockSchedule[i].totalPercentageUnlocked
             );
         }
-
-        assert(
-            unlockSchedule[unlockSchedule.length - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR
-        );
     }
 }

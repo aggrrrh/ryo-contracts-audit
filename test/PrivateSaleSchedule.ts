@@ -84,7 +84,8 @@ describe('PrivateSaleSchedule', function () {
       await expect(this.tokenSale.connect(account).launchSale())
         .to.be.revertedWithCustomError(this.tokenSale, 'AccessControlUnauthorizedAccount')
 
-      await this.tokenSale.connect(controller).launchSale();
+      await expect(this.tokenSale.connect(controller).launchSale())
+          .to.emit(this.tokenSale, 'SaleLaunch');
     })
   })
 

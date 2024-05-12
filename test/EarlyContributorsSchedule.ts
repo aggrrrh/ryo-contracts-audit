@@ -3,6 +3,7 @@ import { ethers } from 'hardhat'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree'
 import { time } from '@nomicfoundation/hardhat-network-helpers'
+import { CONTROLLER_ROLE, DEFAULT_ADMIN_ROLE } from './constants'
 
 const EARLY_CONTRIBUTORS_TOKEN_SALE_CAP = BigInt('12000000000000000')
 describe('EarlyContributorsSchedule', function () {
@@ -15,24 +16,48 @@ describe('EarlyContributorsSchedule', function () {
     await this.token.connect(owner).transfer(this.tokenSale.target, EARLY_CONTRIBUTORS_TOKEN_SALE_CAP)
   })
 
+  describe('test access control', async function () {
+    it('controller has controller role by default', async function () {
+        const [owner, controller] = await ethers.getSigners()
+        expect(await this.tokenSale.hasRole(CONTROLLER_ROLE, controller)).to.be.equal(true);
+    })
+
+    it('controller role\'s admin is the default admin role', async function () {
+      expect(await this.tokenSale.getRoleAdmin(CONTROLLER_ROLE)).to.be.equal(DEFAULT_ADMIN_ROLE);
+    });
+
+    it('only controller role can call launchSale', async function () {
+        const [owner, controller, account] = await ethers.getSigners()
+
+        const tree = buildTree(account, 500)
+        await this.tokenSale.connect(controller).setClaimRoot(tree.root)
+
+        await expect(this.tokenSale.connect(account).launchSale())
+            .to.be.revertedWithCustomError(this.tokenSale, 'AccessControlUnauthorizedAccount')
+
+        await expect(this.tokenSale.connect(controller).launchSale())
+            .to.emit(this.tokenSale, 'SaleLaunch');
+    })
+
+    it('setClaimRoot must be called by controller', async function () {
+        const [owner, controller, account] = await ethers.getSigners()
+
+        const tree = buildTree(account, 500)
+
+        await expect(this.tokenSale.connect(owner).setClaimRoot(tree.root))
+            .to.be.revertedWithCustomError(this.tokenSale, 'AccessControlUnauthorizedAccount')
+
+        await expect(this.tokenSale.connect(controller).setClaimRoot(tree.root))
+            .to.not.be.reverted
+    })
+  })
+
   describe('test claim', async function () {
     it('vesting must be started', async function () {
       const [owner, controller, account] = await ethers.getSigners()
 
       await expect(this.tokenSale.connect(account).withdraw(account, 20, 500, []))
         .to.be.rejectedWith('MerkleTokenUnlockSchedule: Unlock schedule not started yet')
-    })
-
-    it('setClaimRoot must be called by controller', async function () {
-      const [owner, controller, account] = await ethers.getSigners()
-
-      const tree = buildTree(account, 500)
-
-      await expect(this.tokenSale.connect(owner).setClaimRoot(tree.root))
-        .to.be.revertedWithCustomError(this.tokenSale, 'AccessControlUnauthorizedAccount')
-
-      await expect(this.tokenSale.connect(controller).setClaimRoot(tree.root))
-        .to.not.be.reverted
     })
 
     it('proof must be valid', async function () {
