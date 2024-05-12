@@ -149,9 +149,5 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
                     unlockSchedule[i].totalPercentageUnlocked
             );
         }
-
-        assert(
-            unlockSchedule[unlockSchedule.length - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR
-        );
     }
 }
