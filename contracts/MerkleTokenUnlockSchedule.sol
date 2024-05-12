@@ -131,7 +131,7 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
     function getUnlockedPercent(
         uint256 secondsPassed
     ) internal view returns (uint16) {
-        uint8 index = 0;
+        uint256 index = 0;
         while(index < unlockSchedule.length && unlockSchedule[index].unlockTimePass < secondsPassed) { index++; }
 
         return index > 0 ? unlockSchedule[index - 1].totalPercentageUnlocked : 0;
@@ -142,7 +142,7 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
         assert(steps > 1);
         assert(unlockSchedule[steps - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR);
 
-        for (uint8 i = 1; i < steps; ++i) {
+        for (uint256 i = 1; i < steps; ++i) {
             assert(
                 unlockSchedule[i - 1].unlockTimePass <
                     unlockSchedule[i].unlockTimePass
