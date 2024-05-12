@@ -7,9 +7,8 @@ import "./TokenUnlockSchedule.sol";
 contract LiquiditySchedule is TokenUnlockSchedule {
     // solhint-disable-next-line no-empty-blocks
     constructor(
-      IERC20 token,
       address timelockController
-    ) TokenUnlockSchedule(token, timelockController) {}
+    ) TokenUnlockSchedule(timelockController) {}
 
     function _initUnlockSchedule() internal override {
         unlockSchedule.push(UnlockScheduleItem(0 days, 2000));

@@ -16,6 +16,7 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
 
     event ClaimRootSet(bytes32 _newClaimRoot);
     event SaleLaunch(address sender);
+    event TokenInitialized(address token);
 
     struct UnlockScheduleItem {
         uint256 unlockTimePass;
@@ -28,18 +29,14 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
     uint256 public scheduleStartTimestamp = 0;
     bytes32 private claimRoot;
 
-    IERC20 public immutable token;
+    IERC20 public token;
 
     bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
     uint16 private constant PERCENT_DENOMINATOR = 10_000;
 
     function _initUnlockSchedule() internal virtual;
 
-    constructor(IERC20 token_, address _timelockController) {
-        require(
-            address(token_) != address(0),
-            "MerkleTokenUnlockSchedule: New token address cannot be null"
-        );
+    constructor(address _timelockController) {
         require(
             _timelockController != address(0), 
             "MerkleTokenUnlockSchedule: Timelock controller address cannot be null"
@@ -47,10 +44,22 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
 
         _grantRole(CONTROLLER_ROLE, _timelockController);
 
-        token = token_;
-
         _initUnlockSchedule();
         _validateUnlockSchedule();
+    }
+
+    function setToken(IERC20 token_) external onlyRole(CONTROLLER_ROLE) {
+        require(
+            address(token_) != address(0),
+            "MerkleTokenUnlockSchedule: New token address cannot be null"
+        );
+        require(
+            address(token) == address(0),
+            "MerkleTokenUnlockSchedule: Token already set"
+        );
+
+        token = token_;
+        emit TokenInitialized(address(token_));
     }
 
     function setClaimRoot(bytes32 _root) external onlyRole(CONTROLLER_ROLE) {
