@@ -26,7 +26,6 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
 
     uint256 public scheduleStartTimestamp = 0;
     bytes32 private claimRoot;
-    uint256 public totalBalance;
 
     IERC20 public immutable token;
 
