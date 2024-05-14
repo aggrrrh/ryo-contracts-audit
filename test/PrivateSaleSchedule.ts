@@ -1,18 +1,29 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { SnapshotRestorer, takeSnapshot, time } from '@nomicfoundation/hardhat-network-helpers'
-import { CONTROLLER_ROLE, DEFAULT_ADMIN_ROLE, ZERO_ADDRESS } from './constants'
-
-const PRIVATE_TOKEN_SALE_CAP = BigInt('12000000000000000')
+import { CONTROLLER_ROLE, DEFAULT_ADMIN_ROLE, PRIVATE_SALE_SUPPLY, ZERO_ADDRESS } from './constants'
 
 describe('PrivateSaleSchedule', function () {
   beforeEach(async function () {
-    const [owner, controller] = await ethers.getSigners()
+    const [
+      owner, controller, round2, round3, round4, round5, round6, round7, round8, round9, round10
+    ] = await ethers.getSigners()
 
-    this.token = await ethers.deployContract('RYO')
-    this.tokenSale = await ethers.deployContract('PrivateSaleSchedule', [this.token, controller], owner)
+    this.tokenSale = await ethers.deployContract('PrivateSaleSchedule', [controller], owner)
+    this.token = await ethers.deployContract('RYO', [
+        this.tokenSale,
+        round2,
+        round3,
+        round4,
+        round5,
+        round6,
+        round7,
+        round8,
+        round9,
+        round10,
+    ])
 
-    await this.token.connect(owner).transfer(this.tokenSale.target, PRIVATE_TOKEN_SALE_CAP)
+    await this.tokenSale.connect(controller).setToken(this.token)
   })
 
   describe('test initial state', async function () {
@@ -108,7 +119,7 @@ describe('PrivateSaleSchedule', function () {
 
       const availableBalance = await this.token.balanceOf(owner)
 
-      await expect(this.tokenSale.connect(controller).addBalance(account, availableBalance + BigInt(100)))
+      await expect(this.tokenSale.connect(controller).addBalance(account, PRIVATE_SALE_SUPPLY + BigInt(100)))
         .to.be.revertedWith('TokenUnlockSchedule: Total balance exceeds available balance')
     })
 

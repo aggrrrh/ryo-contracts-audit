@@ -5,15 +5,28 @@ import { StandardMerkleTree } from '@openzeppelin/merkle-tree'
 import { time } from '@nomicfoundation/hardhat-network-helpers'
 import { CONTROLLER_ROLE, DEFAULT_ADMIN_ROLE } from './constants'
 
-const EARLY_CONTRIBUTORS_TOKEN_SALE_CAP = BigInt('12000000000000000')
 describe('EarlyContributorsSchedule', function () {
   beforeEach(async function () {
-    const [owner, controller] = await ethers.getSigners()
+    const [
+      owner, controller, round1, round2, round3, round5, round6, round7, round8, round9, round10
+    ] = await ethers.getSigners()
 
-    this.token = await ethers.deployContract('RYO')
-    this.tokenSale = await ethers.deployContract('EarlyContributorsSchedule', [this.token, controller], owner)
+    this.tokenSale = await ethers.deployContract('EarlyContributorsSchedule', [controller], owner)
 
-    await this.token.connect(owner).transfer(this.tokenSale.target, EARLY_CONTRIBUTORS_TOKEN_SALE_CAP)
+    this.token = await ethers.deployContract('RYO', [
+        round1,
+        round2,
+        round3,
+        this.tokenSale,
+        round5,
+        round6,
+        round7,
+        round8,
+        round9,
+        round10,
+    ])
+
+    await this.tokenSale.connect(controller).setToken(this.token)
   })
 
   describe('test access control', async function () {
