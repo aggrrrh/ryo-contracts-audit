@@ -70,6 +70,8 @@ abstract contract TokenUnlockSchedule is AccessControl {
 
     function launchSale() external onlyRole(CONTROLLER_ROLE) {
         require(scheduleStartTimestamp == 0, "TokenUnlockSchedule: Sale already launched");
+        require(address(token) != address(0), "TokenUnlockSchedule: Token not set");
+
         // solhint-disable-next-line not-rely-on-time
         scheduleStartTimestamp = block.timestamp;
 

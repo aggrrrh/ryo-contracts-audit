@@ -70,6 +70,7 @@ abstract contract MerkleTokenUnlockSchedule is AccessControl {
 
     function launchSale() external onlyRole(CONTROLLER_ROLE) {
         require(scheduleStartTimestamp == 0, "MerkleTokenUnlockSchedule: Sale already launched");
+        require(address(token) != address(0), "TokenUnlockSchedule: Token not set");
         require(
             claimRoot != bytes32(0), 
             "MerkleTokenUnlockSchedule: Cannot launch - Claim root is not set"
