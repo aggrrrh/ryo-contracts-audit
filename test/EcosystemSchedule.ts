@@ -5,7 +5,6 @@ describe('EcosystemSchedule', function () {
     it('test deployment', async function () {
         const [owner, controller] = await ethers.getSigners()
 
-        const token = await ethers.deployContract('RYO')
-        const schedule = await ethers.deployContract('EcosystemSchedule', [token, controller], owner)
+        const schedule = await ethers.deployContract('EcosystemSchedule', [controller], owner)
     })
 })

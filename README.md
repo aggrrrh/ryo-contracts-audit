@@ -33,7 +33,7 @@ Recommended order for deployment:
 2. Deploy GovernanceTimeLock with reasonable time delay and multi-sig as proposer and signers as executors
 3. Deploy RYO token
 4. Deploy vesting contracts
-5. Distribute allocation to vesting contracts according to tokenomics
+5. Set vesting contracts' token to deployed token address
 
 ## Development guide
 

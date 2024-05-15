@@ -6,9 +6,8 @@ import "./MerkleTokenUnlockSchedule.sol";
 contract EarlyContributorsSchedule is MerkleTokenUnlockSchedule {
     // solhint-disable-next-line no-empty-blocks
     constructor(
-        IERC20 _token,
         address _timelockController
-    ) MerkleTokenUnlockSchedule(_token, _timelockController) {}
+    ) MerkleTokenUnlockSchedule(_timelockController) {}
 
     function _initUnlockSchedule() internal override {
         unlockSchedule.push(UnlockScheduleItem(0 days, 200));

@@ -18,7 +18,7 @@ abstract contract TokenUnlockSchedule is AccessControl {
         address indexed to,
         uint256 amount
     );
-
+    event TokenInitialized(address token);
     event SaleLaunch(address sender);
 
     bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
@@ -42,11 +42,7 @@ abstract contract TokenUnlockSchedule is AccessControl {
 
     function _initUnlockSchedule() internal virtual;
 
-    constructor(IERC20 token_, address timelockController_) {
-        require(
-            address(token_) != address(0),
-            "TokenUnlockSchedule: New token address cannot be null"
-        );
+    constructor(address timelockController_) {
         require(
           timelockController_ != address(0),
           "TokenUnlockSchedule: Timelock controller address cannot be null"
@@ -54,14 +50,28 @@ abstract contract TokenUnlockSchedule is AccessControl {
 
         _grantRole(CONTROLLER_ROLE, timelockController_);
 
-        token = token_;
-
         _initUnlockSchedule();
         _validateUnlockSchedule();
     }
 
+    function setToken(IERC20 token_) external onlyRole(CONTROLLER_ROLE) {
+        require(
+            address(token_) != address(0),
+            "TokenUnlockSchedule: New token address cannot be null"
+        );
+        require(
+            address(token) == address(0),
+            "TokenUnlockSchedule: Token already set"
+        );
+
+        token = token_;
+        emit TokenInitialized(address(token_));
+    }
+
     function launchSale() external onlyRole(CONTROLLER_ROLE) {
         require(scheduleStartTimestamp == 0, "TokenUnlockSchedule: Sale already launched");
+        require(address(token) != address(0), "TokenUnlockSchedule: Token not set");
+
         // solhint-disable-next-line not-rely-on-time
         scheduleStartTimestamp = block.timestamp;
 
