@@ -2,7 +2,10 @@ import { HardhatUserConfig } from "hardhat/config"
 import "@nomicfoundation/hardhat-ignition-ethers"
 import "@nomicfoundation/hardhat-toolbox"
 import "@nomiclabs/hardhat-web3"
-import './tasks/payload'
+import "dotenv/config"
+import "./tasks/payload"
+
+const { INFURA_API_KEY, SEPOLIA_PRIVATE_KEY, MAINNET_PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -14,6 +17,22 @@ const config: HardhatUserConfig = {
       }
     }
   },
-};
+  networks: {
+    sepolia: {
+      url: "https://sepolia.infura.io/v3/" + INFURA_API_KEY,
+      accounts: [`${SEPOLIA_PRIVATE_KEY}`],
+    },
+    mainnet: {
+      url: "https://mainnet.infura.io/v3/" + INFURA_API_KEY,
+      accounts: [`${MAINNET_PRIVATE_KEY}`],
+    },
+  },
+  etherscan: {
+    apiKey: ETHERSCAN_API_KEY,
+  },
+  sourcify: {
+    enabled: false,
+  }
+}
 
 export default config;
