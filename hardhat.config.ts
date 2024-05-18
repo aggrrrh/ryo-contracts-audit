@@ -4,6 +4,7 @@ import "@nomicfoundation/hardhat-toolbox"
 import "@nomiclabs/hardhat-web3"
 import "dotenv/config"
 import "./tasks/payload"
+import "./tasks/merkle-tree"
 
 const { INFURA_API_KEY, SEPOLIA_PRIVATE_KEY, MAINNET_PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env
 
