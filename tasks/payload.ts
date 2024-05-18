@@ -53,3 +53,13 @@ task('payload:add-balance', 'Calculate TokenUnlockSchedule::addBalance for TimeL
 
     console.log(`💾: "${addBalanceData}"`)
   })
+
+task('payload:update-delay', 'Calculate GovernanceTimeLock::updateDelay')
+  .addParam('delay', 'New delay for TimeLockController', undefined, types.int)
+  .setAction(async (taskArgs, env) => {
+
+    const TimeLock = await env.ethers.getContractFactory('GovernanceTimeLock')
+    const updateDelayData = TimeLock.interface.encodeFunctionData(TimeLock.interface.getFunction('updateDelay')!, [+taskArgs.delay])
+
+    console.log(`💾: "${updateDelayData}"`)
+  })
