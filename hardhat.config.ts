@@ -1,7 +1,8 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-ignition-ethers";
-import "@nomicfoundation/hardhat-toolbox";
-import "@nomiclabs/hardhat-web3";
+import { HardhatUserConfig } from "hardhat/config"
+import "@nomicfoundation/hardhat-ignition-ethers"
+import "@nomicfoundation/hardhat-toolbox"
+import "@nomiclabs/hardhat-web3"
+import './tasks/payload'
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -9,7 +10,7 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 10000 // runtime optimized
+        runs: 200 // runtime optimized
       }
     }
   },

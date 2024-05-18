@@ -15,7 +15,8 @@
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/merkle-tree": "^1.0.6",
     "hardhat": "^2.22.2",
-    "web3": "^1.10.4"
+    "web3": "^1.10.4",
+    "web3-validator": "^2.0.5"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.2"
