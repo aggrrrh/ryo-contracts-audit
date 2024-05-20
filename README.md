@@ -47,3 +47,8 @@ You can deploy to hardhat test network via ignition:
 ```
 npx hardhat ignition deploy ignition/modules/RYO.ts --network hardhat --parameters ignition/parameters.json
 ```
+
+Verify on Etherscan on mainnet:
+```
+npx hardhat ignition verify chain-1
+```
