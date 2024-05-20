@@ -2,7 +2,7 @@ import { task, types } from 'hardhat/config'
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree'
 import { createReadStream, createWriteStream } from 'fs'
 import { createInterface } from 'readline'
-import { writeFileSync } from 'fs'
+import { writeFileSync, readFileSync } from 'fs'
 
 task('merkle-tree:build', 'Builds merkle tree from provided file')
   .addParam('path', 'Path to CSV file containing account information and balances. See accounts.example.csv', undefined, types.string)
@@ -36,3 +36,23 @@ task('merkle-tree:build', 'Builds merkle tree from provided file')
     console.log('Merkle tree successfully written to:', output)
     console.log('Root:', merkleTree.root)
   })
+
+task('merkle-tree:get-proof', 'Returns Merkle proof from the provided file and a leaf index')
+.addParam('path', 'Path to json file containing a Merkle tree', 'tree.json', types.string)
+.addParam('leaf', 'Leaf index', undefined, types.int)
+.addParam('output', 'Output file path', 'tree-proof.json', types.string)
+.setAction(async (taskArgs, env) => {
+  const { path, leaf, output } = taskArgs
+
+  const tree = StandardMerkleTree.load(JSON.parse(readFileSync(path, "utf8")));
+
+  for (const [i, v] of tree.entries()) {
+    if (i === leaf) {
+      const proof = tree.getProof(i);
+      console.log('Value:', v);
+      writeFileSync(output, JSON.stringify(proof));
+
+      console.log('Merkle tree successfully written to:', output)
+    }
+  }
+})

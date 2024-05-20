@@ -16,3 +16,5 @@ node_modules
 
 ignition/deployments
 tree.json
+tree-proof.json
+accounts.csv
