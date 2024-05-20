@@ -21,11 +21,11 @@ const config: HardhatUserConfig = {
   networks: {
     sepolia: {
       url: "https://sepolia.infura.io/v3/" + INFURA_API_KEY,
-      accounts: [`${SEPOLIA_PRIVATE_KEY}`],
+      accounts: [SEPOLIA_PRIVATE_KEY!],
     },
     mainnet: {
       url: "https://mainnet.infura.io/v3/" + INFURA_API_KEY,
-      accounts: [`${MAINNET_PRIVATE_KEY}`],
+      accounts: [MAINNET_PRIVATE_KEY!],
     },
   },
   etherscan: {
